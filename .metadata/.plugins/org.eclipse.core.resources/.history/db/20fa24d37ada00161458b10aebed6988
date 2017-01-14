@@ -9,8 +9,7 @@ public class DialARide {
 	public static void main(String[] args) throws Exception{
 		//Read Input
 		ReadInput ri=new ReadInput();
-//		ri.readInput(args[0]);
-		ri.readInput("input.txt");
+		ri.readInput(args[0]);
 /*		OutputInFile of=new OutputInFile();
 		System.out.println("Distance matrix ");
 		ri.displayMatrix(ri.getDistMatrix(),ri.getNoOfLocations(),ri.getNoOfLocations());
