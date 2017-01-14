@@ -1,0 +1,121 @@
+package io;
+import java.io.BufferedReader;
+import java.io.FileReader;
+
+public class ReadInput {
+	private int noOfLocations,noOfVehicles,capacity,noOfRequests;
+	private int distMatrix[][];
+	private int requestMatrix[][];
+	private int startLocations[];
+	OutputInFile of=new OutputInFile();
+	public int getNoOfLocations() {
+		return noOfLocations;
+	}
+	public int getNoOfVehicles() {
+		return noOfVehicles;
+	}
+	public int getCapacity() {
+		return capacity;
+	}
+	public int getNoOfRequests() {
+		return noOfRequests;
+	}
+	public int[][] getDistMatrix() {
+		return distMatrix;
+	}
+	public int[][] getRequestMatrix() {
+		return requestMatrix;
+	}
+	public int[] getStartLocations() {
+		return startLocations;
+	}
+
+	void readInput(String fname)
+	{
+		//ReadInput File
+	//	String fileName="/home/sanjivani/workspace/DialARide/src/input.txt";
+	   String fileName=fname;/*"/home/sanjivani/workspace/DialARide/src/test1";*/
+		try{
+	    BufferedReader bufferReader = new BufferedReader(new FileReader(fileName));
+	    String line;
+	    int lNo=0;
+	    String temp[];
+
+	    while ((line = bufferReader.readLine()) != null)   {
+	    		line=removeExtraSpaces(line.trim());
+            	temp=line.split(" ");
+	            if(lNo==0)//Read the first line
+	            {
+	            noOfLocations=Integer.parseInt(temp[0]);
+	            noOfVehicles=Integer.parseInt(temp[1]);
+	            capacity=Integer.parseInt(temp[2]);
+	            noOfRequests=Integer.parseInt(temp[3]);
+	            distMatrix=new int[noOfLocations][noOfLocations];
+	            requestMatrix=new int[noOfRequests][4];
+	            startLocations=new int[noOfVehicles];
+	            lNo++;
+	            }
+	            else if(lNo>0 && lNo<=noOfLocations)//Read the dist matrix
+	            {
+	            	for(int i=0;i<temp.length;i++)
+	            		distMatrix[lNo-1][i]=Integer.parseInt(temp[i]);
+	            	lNo++;
+	            }
+	            else if(lNo==noOfLocations+1) //Read start locations of the vehicles
+	            {
+	            	for(int i=0;i<temp.length;i++)
+	            		startLocations[i]=Integer.parseInt(temp[i]);
+	            	lNo++;
+	            }
+	            else //Read Requests
+	            {	
+	            	for(int i=0;i<temp.length;i++)
+	            		requestMatrix[lNo-(noOfLocations+2)][i]=Integer.parseInt(temp[i]);
+	            	lNo++;
+	            }
+	            
+	    }
+	    bufferReader.close();
+	    }catch(Exception e){
+	         //   System.out.println("Error while reading file line by line:" + e.getMessage());                      
+	    }
+	}
+	void displayMatrix(int A[][],int noOfRows,int noOfColumns,String fileName)
+	{
+		int count=1;
+		String s="";
+		for(int i=0;i<noOfRows;i++,count++)
+		{
+			s="";
+			s+=count+"\t";
+			for(int j=0;j<noOfColumns;j++)
+				s+=A[i][j]+"\t";
+			of.outputFile(s+"\n",fileName);
+		}		
+	}
+	String removeExtraSpaces(String line)
+	{
+		String line1="";
+		char arr[]=line.toCharArray();
+		int k=1;
+		for(int i=0;i<line.length();i+=k)
+		{
+			if(arr[i]==' ')
+			{
+				k=1;
+				line1+=arr[i];
+				if(arr[i+1]==' ')
+				for(int j=i+1;arr[j]==' ';j++)
+				{
+					k++;
+				}
+			}
+			else
+			{
+				line1+=arr[i];
+				k=1;
+			}
+		}
+		return line1;
+	}
+}
