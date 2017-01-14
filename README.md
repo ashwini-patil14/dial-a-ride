@@ -1,3 +1,9 @@
+
+To run: Go to main/DialARide.java and run as normal java application
+
+Note: "input.txt" in DialARide.java is a file name and can be replaced by the other test file name test1
+
+Logic:
 -> My approach for solving dial a ride:
 1. Solved the example given in the question pdf manually
 2. Broken down the problem in 2 parts:
