@@ -1,0 +1,152 @@
+public class AllPairShortestPath {
+	private int[][] distMatrix;
+	private int noOfPlaces;
+	private int shortestPathMatrix[][];
+	private int pathFrom[][];
+
+//	OutputInFile of=new OutputInFile();
+	public int[][] getPathFrom() {
+		return pathFrom;
+	}
+	public void setDistMatrix(int[][] distMatrix) {
+		this.distMatrix = distMatrix;
+	}
+	public int[][] getShortestPathMatrix() {
+		return shortestPathMatrix;
+	}
+	
+	public AllPairShortestPath(int noOfPlaces) {
+	this.noOfPlaces=noOfPlaces;
+	shortestPathMatrix=new int[noOfPlaces][noOfPlaces];
+	pathFrom=new int[noOfPlaces][noOfPlaces];
+	}
+	
+	void findShortestPath() 
+	//Construct the shortest path and pathFrom matrix
+	{
+		int i,j,k;
+		for(i=0;i<noOfPlaces;i++)
+			for(j=0;j<noOfPlaces;j++)
+			{
+				if(distMatrix[i][j]>0)
+					shortestPathMatrix[i][j]=distMatrix[i][j];
+				else if(i==j)
+					shortestPathMatrix[i][j]=0;
+				else
+					shortestPathMatrix[i][j]=1000;
+				pathFrom[i][j]=i+1;
+			}
+		for(k=0;k<noOfPlaces;k++)
+			for(i=0;i<noOfPlaces;i++)
+				for(j=0;j<noOfPlaces;j++)
+				{
+					if(shortestPathMatrix[i][j]!=findMin(shortestPathMatrix[i][j], shortestPathMatrix[i][k]+shortestPathMatrix[k][j]))
+					{
+						shortestPathMatrix[i][j]= shortestPathMatrix[i][k]+shortestPathMatrix[k][j];
+						pathFrom[i][j]=pathFrom[k][j];
+					}
+
+				}
+/*		ReadInput ri=new ReadInput();
+		of.outputFile("\n","ShortOutput");
+		of.outputFile("Shortest Path matrix","ShortOutput");
+		ri.displayMatrix(shortestPathMatrix,noOfPlaces,noOfPlaces,"ShortOutput");
+		of.outputFile("From Path matrix","ShortOutput");
+		ri.displayMatrix(pathFrom,noOfPlaces,noOfPlaces,"ShortOutput");
+*/	}
+	
+	public int[] getCompletePath(int loc1, int loc2)
+	//get complete path,with all the locations traversed while going from loc1 to loc2
+	{
+		Stack ob=new Stack(noOfPlaces);
+		int complPath[]=new int[noOfPlaces];
+		int count=0;
+		int dest=loc2;
+		for(int i=0;i<noOfPlaces;i++)
+			complPath[i]=-1;
+		complPath[count++]=loc1;
+
+		while(pathFrom[loc1-1][loc2-1]!=loc1)
+			{
+				ob.push(pathFrom[loc1-1][loc2-1]);
+				loc2=pathFrom[loc1-1][loc2-1];
+			}
+
+		while(!ob.isEmpty())
+		{
+			complPath[count++]=ob.pop();
+		}
+		complPath[count++]=dest;
+		int resultPath[]=new int[count];
+//		System.out.println("Complete path from "+loc1+" to "+dest);
+		for(int i=0;i<count;i++)
+		{
+			resultPath[i]=complPath[i];
+//			System.out.print(resultPath[i]+",");
+		}
+//		System.out.println();
+		return resultPath;
+	}
+	
+	int findMin(int a, int b)
+	{
+		return a>b?b:a;
+	}
+	boolean notReachable(int loc1,int loc2)
+	{
+		return shortestPathMatrix[loc1-1][loc2-1]==1000;
+	}
+	int getMinChargeForRequest(int loc1,int loc2)
+	{
+		return shortestPathMatrix[loc1-1][loc2-1];
+	}
+	public int calcTime(int loc1,int loc2)
+	{
+		return shortestPathMatrix[loc1-1][loc2-1]*2;
+	}
+	public void formOrder(int path[], int count, RequestGroup reqG, Request request[])
+	//Arrange the request in the requestGroup in the order from the one which is closest to startLoc to 
+	//the one which is farthest from startLoc
+	{
+		int result[]=new int[count+1];
+		Request[] req_result=new Request[request.length];
+		boolean taken[]=new boolean[count+1];
+		for(int i=0;i<taken.length;i++)
+			taken[i]=false;
+		result[0]=path[0];
+		taken[0]=true;
+		int loc=path[0];
+		int closest=0;
+		int k=1;
+		for(int i=0;i<count;i++)
+		{
+			req_result[i]=new Request();
+		}
+			for(int i=0;i<count;i++)
+		{
+			int min=1000;
+			for(int j=1;j<=count;j++)
+			{
+				if(!taken[j] && shortestPathMatrix[loc-1][path[j]-1]<min)
+				{
+					min=shortestPathMatrix[loc-1][path[j]-1];
+					closest=j;
+				}
+			}
+			taken[closest]=true;
+			if(closest!=0)
+			{
+			req_result[k-1]=request[closest-1];
+			result[k++]=path[closest];
+			loc=path[closest];
+			}
+			else
+			req_result[k-1]=request[closest];
+			
+		}
+		reqG.setPathTraversed(result);
+		reqG.setRequestOrder(req_result);
+		
+	}
+
+}
